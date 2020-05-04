@@ -1,1 +1,5 @@
 TripID,Stowaway,ReservedSeats,Status
+1,Julio,1,Open
+1,Sandra,2,Open
+2,Jose,2,Closed
+2,Juana,3,Canceled
