@@ -21,11 +21,12 @@ defmodule Stowaway do
                 menu()            
             1 ->  
                 IO.puts "Buscando viajes..."
-                #ver_viajes()
+                IO.puts ver_viajes()
                 enviar(0)
                 menu()
             2 ->
                 IO.puts "Cargando viajes..."
+                IO.puts ver_historial()
                 enviar(0)   
                 menu()          
             3 ->
@@ -51,28 +52,20 @@ defmodule Stowaway do
         {:ok, smth} 
     end
 
-    # Call y Callback de las dos opciones del menú existente.
-    # ATENCIÓN, SE HAN PUESTO COMO LLAMADAS ASINCRONAS (CAST) PARA QUE 
-    #   FUNCIONE, PERO PROBABLEMENTE HAYA DE SER SINCRONA. ADEMÁS, 
-    #   EL IO.PUTS SOLO PRINTEA SI SE LAS LLAMA DIRECTAMENTE, EL MENSAJE
-    #   SE PIERDE EN EL MENÚ. HAY QUE RECUPERARLO.
 
-    def ver_viajes(), do: GenServer.cast(:stowserver, :viajes)
+    def ver_viajes(), do: GenServer.call(:stowserver, :viajes)
 
     @impl true
-    def handle_cast(:viajes,state) do
-            IO.puts "Estos son los viajes que hemos encontrado:\n"
-            {:noreply, state}
+    def handle_call(:viajes, _from, []) do
+            {:reply, "Estos son los viajes que hemos encontrado", []}
     end
 
 
-
-    def ver_historial(), do: GenServer.cast(:stowserver, :historial)
-
+    def ver_historial(), do: GenServer.call(:stowserver, :historial)
+    
     @impl true
-    def handle_cast(:historial,state) do
-            IO.puts "Tus viajes:\n"
-            {:noreply, state}
+    def handle_call(:historial, _from, []) do
+            {:reply, "Tus viajes:" ,[]}
     end
 
 
