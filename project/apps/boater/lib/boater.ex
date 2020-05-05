@@ -43,11 +43,11 @@ defmodule Boater do
 
   @impl true
   def handle_call(:viajes, _from, []) do
-      
-        {:reply, filterSearch, []}
+        {:reply,  filterSearch(), []}
   end 
 
-  def filterSearch(), do: "../Trip.csv" |> Path.expand |> File.stream! |> CSV.decode |> Enum.map(fn x -> elem(x,1) end) |> Enum.filter(&match?([_,"Raquel",_,_,_,_,_,_,_],&1))
+  defp filterSearch(), do: "../Trip.csv" |> Path.expand |> File.stream! |> CSV.decode |> Enum.map(fn x -> elem(x,1) end) |> Enum.filter(&match?([_,_,_,_,_,_,_,_,"Open"],&1)) 
+
+end  
 
 
-end
