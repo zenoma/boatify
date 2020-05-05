@@ -1,35 +1,32 @@
 defmodule Directory do
   
-  def levantar_cliente(type) do
-    case type do
-      :boater -> 
-        Process.register(spawn(fn -> boater_menu() end), :boatclient)
-        enviar_boat(0)
-      :stowaway -> 
-        Process.register(spawn(fn -> stowaway_menu() end), :stowclient)
-        enviar_stow(0)
-      _ -> IO.puts "No se encuentra dicho cliente"
-    end
+  def cliente_boater(login) do
+    Process.register(spawn(fn -> boater_menu(login) end), :boatclient)
+    enviar_boat(0)
   end
 
+  def cliente_stowaway(login) do
+    Process.register(spawn(fn -> stowaway_menu(login) end), :stowclient)
+    enviar_stow(0)
+  end
  
   def enviar_stow(term), do: send(:stowclient, term)
 
-  defp stowaway_menu() do   #TODO: Selección aleatoria para la repartición de carga entre servidores (del mismo tipo) duplicados.
+  defp stowaway_menu(login) do   #TODO: Selección aleatoria para la repartición de carga entre servidores (del mismo tipo) duplicados.
     receive do
         0 ->
             IO.puts "\nPulsa: \n 1 -Viajes disponibles \n 2 -Mis viajes \n 3 -Salir"
-            stowaway_menu()            
+            stowaway_menu(login)            
         1 ->  
             IO.puts "Buscando viajes..."
             IO.puts Boater.ver_viajes() # QUE MUESTRE TODOS LOS OPEN
             enviar_stow(0)
-            stowaway_menu()
+            stowaway_menu(login)
         2 ->
             IO.puts "Cargando viajes..."
-            IO.puts Stowaway.ver_historial() # FILTRAR POR NOMBRE DE USUARIO
+            IO.puts Stowaway.ver_historial(login) # FILTRAR POR NOMBRE DE USUARIO
             enviar_stow(0)   
-            stowaway_menu()          
+            stowaway_menu(login)          
         3 ->
             IO.puts "Hasta pronto!"
             Process.unregister(:stowclient)
@@ -37,27 +34,27 @@ defmodule Directory do
         _msg ->
             IO.puts "Escoge una de las opciones posibles"
             enviar_stow(0)
-            stowaway_menu()
+            stowaway_menu(login)
     end 
   end
 
   def enviar_boat(term), do: send(:boatclient, term)
 
-  defp boater_menu() do
+  defp boater_menu(login) do
     receive do
       0 ->
           IO.puts "\nPulsa: \n 1 -Crear Viaje \n 2 -Mis viajes \n 3 -Salir"
-          boater_menu()            
+          boater_menu(login)            
       1 ->  
           IO.puts "Creando viajes..."
           IO.puts Boater.crear_viajes() # Crear un viaje "bien" (Input)
           enviar_boat(0)
-          boater_menu()
+          boater_menu(login)
       2 ->
           IO.puts "Cargando viajes..." # Similar a Stowaway verHistorial pero filtro en BOATER
           IO.puts Boater.ver_viajes()
           enviar_boat(0)   
-          boater_menu()          
+          boater_menu(login)          
       3 ->
           IO.puts "Hasta pronto!"
           Process.unregister(:boatclient)
@@ -65,7 +62,7 @@ defmodule Directory do
       _msg ->
           IO.puts "Escoge una de las opciones posibles"
           enviar_boat(0)
-          boater_menu()
+          boater_menu(login)
     end 
   end
 
