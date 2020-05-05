@@ -4,43 +4,7 @@ defmodule Stowaway do
   para reservar una plaza en uno de ellos, para ver su historial de viajes,
   y si quiere cancelar alguno.
   """
-
-    #CLIENTE
-
-    def levantar_cliente() do
-        Process.register( spawn( fn -> menu() end), :stowclient)
-        enviar(0)
-    end
-    
-    def enviar(term), do: send(:stowclient,term)  
-
-    defp menu() do
-        receive do
-            0 ->
-                IO.puts "\nPulsa: \n 1 -Viajes disponibles \n 2 -Mis viajes \n 3 -Salir"
-                menu()            
-            1 ->  
-                IO.puts "Buscando viajes..."
-                IO.puts ver_viajes()
-                enviar(0)
-                menu()
-            2 ->
-                IO.puts "Cargando viajes..."
-                IO.puts ver_historial()
-                enviar(0)   
-                menu()          
-            3 ->
-                IO.puts "Hasta pronto!"
-                Process.unregister(:stowclient)
-                :ok
-            _msg ->
-                IO.puts "Escoge una de las opciones posibles"
-                enviar(0)
-                menu()
-        end 
-    end
-
-
+  
     #SERVER
  
     def levantar_servidor() do

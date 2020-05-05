@@ -2,16 +2,6 @@ defmodule Boater do
   @moduledoc """
   Documentation for `Boater`.
   """
-  def start() do
-    levantar_servidor
-    levantar_cliente()
-  end
-
-
-  def levantar_cliente() do 
-  Process.register(spawn(fn -> menu() end), :boatclient)
-  enviar(0)
-  end
 
   def escribir(archivo, data) do
         File.open(archivo, [:append]) 
@@ -30,36 +20,6 @@ defmodule Boater do
 
     escribir("../Trip.csv", csv_data)
   end
-  
-
-  def enviar(term), do: send(:boatclient, term)
-
-  defp menu() do
-    receive do
-      0 ->
-          IO.puts "\nPulsa: \n 1 -Crear Viaje \n 2 -Mis viajes \n 3 -Salir"
-          menu()            
-      1 ->  
-          IO.puts "Creando viajes..."
-          IO.puts crear_viajes()
-          enviar(0)
-          menu()
-      2 ->
-          IO.puts "Cargando viajes..."
-          IO.puts ver_viajes()
-          enviar(0)   
-          menu()          
-      3 ->
-          IO.puts "Hasta pronto!"
-          Process.unregister(:stowclient)
-          :ok
-      _msg ->
-          IO.puts "Escoge una de las opciones posibles"
-          enviar(0)
-          menu()
-    end 
-  end
-
 
   #SERVER
   def levantar_servidor() do
@@ -83,6 +43,11 @@ defmodule Boater do
 
   @impl true
   def handle_call(:viajes, _from, []) do
-        {:reply, "Estos son los viajes que hemos encontrado", []}
+      
+        {:reply, filterSearch, []}
   end 
+
+  def filterSearch(), do: "../Trip.csv" |> Path.expand |> File.stream! |> CSV.decode |> Enum.map(fn x -> elem(x,1) end) |> Enum.filter(&match?([_,"Raquel",_,_,_,_,_,_,_],&1))
+
+
 end
