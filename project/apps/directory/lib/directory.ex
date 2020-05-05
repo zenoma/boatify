@@ -15,19 +15,19 @@ defmodule Directory do
  
   def enviar_stow(term), do: send(:stowclient, term)
 
-  defp stowaway_menu() do
+  defp stowaway_menu() do   #TODO: Selección aleatoria para la repartición de carga entre servidores (del mismo tipo) duplicados.
     receive do
         0 ->
             IO.puts "\nPulsa: \n 1 -Viajes disponibles \n 2 -Mis viajes \n 3 -Salir"
             stowaway_menu()            
         1 ->  
             IO.puts "Buscando viajes..."
-            IO.puts Boater.ver_viajes()
+            IO.puts Boater.ver_viajes() # QUE MUESTRE TODOS LOS OPEN
             enviar_stow(0)
             stowaway_menu()
         2 ->
             IO.puts "Cargando viajes..."
-            IO.puts Stowaway.ver_historial()
+            IO.puts Stowaway.ver_historial() # FILTRAR POR NOMBRE DE USUARIO
             enviar_stow(0)   
             stowaway_menu()          
         3 ->
@@ -50,11 +50,11 @@ defmodule Directory do
           boater_menu()            
       1 ->  
           IO.puts "Creando viajes..."
-          IO.puts Boater.crear_viajes()
+          IO.puts Boater.crear_viajes() # Crear un viaje "bien" (Input)
           enviar_boat(0)
           boater_menu()
       2 ->
-          IO.puts "Cargando viajes..."
+          IO.puts "Cargando viajes..." # Similar a Stowaway verHistorial pero filtro en BOATER
           IO.puts Boater.ver_viajes()
           enviar_boat(0)   
           boater_menu()          
