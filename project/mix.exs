@@ -16,8 +16,8 @@ defmodule Project.MixProject do
   #
   # Run "mix help deps" for examples and options.
   defp deps do
-  [
-    {:csv, "~> 2.3"}
-  ]
+    [
+      {:csv, "~> 2.3"}
+    ]
   end
 end
