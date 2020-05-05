@@ -25,12 +25,24 @@ defmodule Stowaway do
     end
 
 
-    def ver_historial(), do: GenServer.call(:stowserver, :historial)
+    @doc """
+        Consulta el historial de viajes del stowaway logueado
+    """
+    def ver_historial(login) do
+        GenServer.call(:stowserver, {:historial, login})
+    end
     
     @impl true
-    def handle_call(:historial, _from, []) do
-            {:reply, "Tus viajes:" ,[]}
+    def handle_call({:historial,login}, _from, []) do
+        {:reply, filterSearch("#{login}") ,[]}
     end
 
+    def filterSearch(login) do "../Record.csv" 
+        |> Path.expand 
+        |> File.stream! 
+        |> CSV.decode 
+        |> Enum.map(fn x -> elem(x,1) end) 
+        |> Enum.filter(&match?([_,login,_,_],&1))
+    end
 
 end

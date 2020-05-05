@@ -25,7 +25,8 @@ defmodule Directory do
             stowaway_menu(login)
         2 ->
             IO.puts "Cargando viajes..."
-            IO.puts Stowaway.ver_historial(login) # FILTRAR POR NOMBRE DE USUARIO
+            Stowaway.ver_historial(login) # FILTRAR POR NOMBRE DE USUARIO
+            |> Enum.map(fn x -> IO.inspect(x) end)
             enviar_stow(0)   
             stowaway_menu(login)          
         3 ->
