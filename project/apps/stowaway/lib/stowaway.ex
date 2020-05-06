@@ -33,4 +33,14 @@ defmodule Stowaway do
     |> Enum.map(fn x -> elem(x, 1) end)
     |> Enum.filter(&match?([_, ^login, _, _], &1))
   end
+
+  # Cancelar viaje
+  def cancelar_viaje(id) do
+    GenServer.call(:stowserver, {:cancelar, id})
+  end
+
+  @impl true
+  def handle_call({:cancelar, id}, _from, []) do
+    {:reply, "Se ha cancelado correctamente el viaje", []}
+  end
 end
