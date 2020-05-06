@@ -9,17 +9,12 @@ defmodule Boater do
     |> IO.binwrite(data)
   end
 
-  # Para escribirLista de Listas
   def to_csv(data) do
-    col_sep = ","
-    fila_sep = "\n"
-
-    csv_data =
-      for fila <- data, into: "" do
-        Enum.join(fila, col_sep) <> fila_sep
-      end
-
-    escribir("../Trip.csv", csv_data)
+    escribir(
+      "../Trip.csv",
+      CSV.encode(data, separator: ?\,, delimiter: "\n")
+      |> Enum.take(1)
+    )
   end
 
   # SERVER
@@ -41,7 +36,7 @@ defmodule Boater do
     to_csv([
       [
         "1",
-        "Raquel",
+        "Raqweqeqweqwuel",
         "Hanse -458",
         "22/11/2020",
         "Gomera – Las Palmas",
