@@ -1,7 +1,40 @@
 defmodule Boater do
+  use GenServer
   @moduledoc """
-  Documentation for `Boater`.
+  Servizo de usuarios 'Boater' para logearse, para crear viajes
+  , para ver su historial de viajes,
+  y si quiere cancelar alguno.
   """
+
+  #SUPERVISOR
+  def start(name) do
+    # FIXME: Hacer bucle para la creación
+    children = [
+      %{
+        id: name,
+        start: {Boater, :levantar_servidor, [name]}
+      }]
+
+      Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
+  end
+
+  def stop() do
+    Supervisor.stop(:boater_sup, :normal)
+  end
+
+  # SERVER
+  def levantar_servidor(name) do
+    GenServer.start_link(Boater, [], name: name)
+  end
+
+  def parar_servidor(name) do
+    GenServer.stop(name, :normal)
+  end
+
+  @impl true
+  def init(smth) do
+    {:ok, smth}
+  end
 
   def escribir(archivo, data) do
     File.open(archivo, [:append])
@@ -17,16 +50,28 @@ defmodule Boater do
     )
   end
 
-  # SERVER
-
-  def levantar_servidor() do
-    GenServer.start_link(Boater, [], name: :boatserver)
+  defp filterSearch() do
+    "../Trip.csv"
+    |> Path.expand()
+    |> File.stream!()
+    |> CSV.decode()
+    |> Enum.map(fn x -> elem(x, 1) end)
+    |> Enum.filter(&match?([_, _, _, _, _, _, _, _, "Open"], &1))
   end
 
-  @impl true
-  def init(smth) do
-    {:ok, smth}
+  
+  defp filterSearch(login) do
+    "../Trip.csv"
+    |> Path.expand()
+    |> File.stream!()
+    |> CSV.decode()
+    |> Enum.map(fn x -> elem(x, 1) end)
+    |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
   end
+  
+  def ver_viajesDisp(), do: GenServer.call(:boatserver, :viajesDisp)
+
+  def ver_viajesSubidos(login), do: GenServer.call(:boatserver, {:viajesSubidos, login})
 
   def crear_viajes(infoTrip), do: GenServer.call(:boatserver, {:crear, infoTrip})
 
@@ -46,39 +91,18 @@ defmodule Boater do
         "Open"
       ]
     ])
-
+    
     {:reply, "Se ha añadido correctamente el viaje", []}
   end
-
-  def ver_viajesDisp(), do: GenServer.call(:boatserver, :viajesDisp)
-
-  @impl true
-  def handle_call(:viajesDisp, _from, []) do
-    {:reply, filterSearch(), []}
-  end
-
-  defp filterSearch() do
-    "../Trip.csv"
-    |> Path.expand()
-    |> File.stream!()
-    |> CSV.decode()
-    |> Enum.map(fn x -> elem(x, 1) end)
-    |> Enum.filter(&match?([_, _, _, _, _, _, _, _, "Open"], &1))
-  end
-
-  def ver_viajesSubidos(login), do: GenServer.call(:boatserver, {:viajesSubidos, login})
 
   @impl true
   def handle_call({:viajesSubidos, login}, _from, []) do
     {:reply, filterSearch(login), []}
   end
-
-  defp filterSearch(login) do
-    "../Trip.csv"
-    |> Path.expand()
-    |> File.stream!()
-    |> CSV.decode()
-    |> Enum.map(fn x -> elem(x, 1) end)
-    |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
-  end
+  
+  @impl true
+  def handle_call(:viajesDisp, _from, []) do
+    {:reply, filterSearch(), []}
+  end  
+  
 end
