@@ -41,6 +41,16 @@ defmodule Stowaway do
 
   @impl true
   def handle_call({:cancelar, id}, _from, []) do
-    {:reply, "Se ha cancelado correctamente el viaje", []}
+    IO.puts(id)
+    {:reply, boatifySearch(id), []}
+  end
+
+  def boatifySearch(id) do
+    "../Record.csv"
+    |> Path.expand()
+    |> File.stream!()
+    |> CSV.decode()
+    |> Enum.map(fn x -> elem(x, 1) end)
+    |> Enum.filter(&match?([^id,_, _, _], &1))
   end
 end

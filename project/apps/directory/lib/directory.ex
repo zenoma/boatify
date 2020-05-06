@@ -8,10 +8,10 @@ defmodule Directory do
 
   def cliente_stowaway(login) do
     Process.register(spawn(fn -> stowaway_menu(login) end), :stowclient)
-    enviar_stow(0,:ok)
+    enviar_stow({0,:ok})
   end
 
-  def enviar_stow(term,_), do: send(:stowclient, {term, :ok})
+  def enviar_stow(term), do: send(:stowclient, term)
 
   # TODO: Selección aleatoria para la repartición de carga entre servidores (del mismo tipo) duplicados.
   defp stowaway_menu(login) do
@@ -26,7 +26,7 @@ defmodule Directory do
         Boater.ver_viajesDisp()
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_stow(0,:ok)
+        enviar_stow({0,:ok})
         stowaway_menu(login)
 
       {2,_} ->
@@ -35,14 +35,15 @@ defmodule Directory do
         Stowaway.ver_historial(login)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_stow(0,:ok)
+        enviar_stow({0,:ok})
         stowaway_menu(login)
 
       {3,id} ->
         IO.puts("Cancelando viaje...")
 
         Stowaway.cancelar_viaje(id)
-        enviar_stow(0,:ok)
+        |> Enum.map(fn x -> IO.inspect(x) end)
+        enviar_stow({0,:ok})
         stowaway_menu(login)
 
       {4,_} ->
@@ -52,7 +53,7 @@ defmodule Directory do
 
       {_,_msg} ->
         IO.puts("Escoge una de las opciones posibles")
-        enviar_stow(0,:ok)
+        enviar_stow({0,:ok})
         stowaway_menu(login)
     end
   end
