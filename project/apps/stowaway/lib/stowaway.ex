@@ -51,6 +51,6 @@ defmodule Stowaway do
     |> File.stream!()
     |> CSV.decode()
     |> Enum.map(fn x -> elem(x, 1) end)
-    |> Enum.filter(&match?([^id,_, _, _], &1))
+    |> Enum.filter(&match?([^id, _, _, _], &1))
   end
 end

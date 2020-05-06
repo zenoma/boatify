@@ -28,22 +28,22 @@ defmodule Boater do
     {:ok, smth}
   end
 
-  def crear_viajes(), do: GenServer.call(:boatserver, :crear)
+  def crear_viajes(infoTrip), do: GenServer.call(:boatserver, {:crear, infoTrip})
 
   @impl true
   # TODO Falta montar el viaje correctamente
-  def handle_call(:crear, _from, []) do
+  def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
     to_csv([
       [
-        "1",
-        "Raqweqeqweqwuel",
-        "Hanse -458",
-        "22/11/2020",
-        "Gomera – Las Palmas",
-        "06:20:00 AM",
-        "6",
-        "6",
-        "Close"
+        "DamnItTheId",
+        boater,
+        model,
+        date,
+        route,
+        time,
+        seats,
+        seats,
+        "Open"
       ]
     ])
 
