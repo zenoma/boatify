@@ -17,12 +17,12 @@ defmodule Directory do
 
   def cliente_boater(login) do
     Process.register(spawn(fn -> boater_menu(login) end), :boatclient)
-    enviar_boat(0)
+    enviar_boater(0)
   end
 
   def cliente_stowaway(login) do
     Process.register(spawn(fn -> stowaway_menu(login) end), :stowclient)
-    enviar_stow({0})
+    enviar_stowaway({0})
   end
 
   def enviar_stowaway(term, opt), do: send(:stowclient, {term, opt})
@@ -43,7 +43,7 @@ defmodule Directory do
         Boater.ver_viajesDisp(select_boater())
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_stow(0)
+        enviar_stowaway(0)
         stowaway_menu(login)
 
       {2, _} ->
@@ -52,7 +52,7 @@ defmodule Directory do
         Stowaway.ver_historial(select_stowaway(), login)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_stow(0)
+        enviar_stowaway(0)
         stowaway_menu(login)
 
       {3, id} ->
@@ -61,7 +61,7 @@ defmodule Directory do
         Stowaway.cancelar_viaje(select_stowaway(), [login | id])
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_stow(0)
+        enviar_stowaway(0)
         stowaway_menu(login)
 
       {4, _} ->
@@ -71,7 +71,7 @@ defmodule Directory do
 
       {_, _} ->
         IO.puts("Escoge una de las opciones posibles")
-        enviar_stow(0)
+        enviar_stowaway(0)
         stowaway_menu(login)
     end
   end
@@ -83,14 +83,14 @@ defmodule Directory do
     receive do
       {0, _} ->
         IO.puts(
-          "\nPulsa: \n 1, [Modelo, Fecha, Ruta, Tiempo, Asientos] -Crear Viaje \n 2 -Mis viajes subidos \n 3 -Salir"
+          "\nPulsa: \n 1, [Modelo, Fecha, Ruta, Tiempo, Asientos] -Crear Viaje \n 2 -Mis viajes subidos \n 3 -Cancelar viaje \n 4 -Salir"
         )
         boater_menu(login)
 
       {1, infoTrip} ->
         IO.puts("Creando viajes...")
         Boater.crear_viajes(select_boater(), [login | infoTrip])
-        enviar_boat(0)
+        enviar_boater(0)
         boater_menu(login)
 
       {2, _} ->
@@ -98,17 +98,22 @@ defmodule Directory do
         Boater.ver_viajesSubidos(select_boater(), login)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
-        enviar_boat(0)
+        enviar_boater(0)
         boater_menu(login)
+      {3, id} ->
+        IO.puts("Cancelando viaje...")
+        # SI NO ENCUENTRA ID, QUE PETE
+        Boater.cancelar_Subido(select_boater(), [login | id])
+        |> Enum.map(fn x -> IO.inspect(x) end)
 
-      {3, _} ->
+      {4, _} ->
         IO.puts("Hasta pronto!")
         Process.unregister(:boatclient)
         :ok
 
       {_, _} ->
         IO.puts("Escoge una de las opciones posibles")
-        enviar_boat(0)
+        enviar_boater(0)
         boater_menu(login)
     end
   end

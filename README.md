@@ -15,11 +15,11 @@
 ```
 To launch Boater Service
 
-Boater.start(<Server_Quantity>)
+    Boater.start(<Server_Quantity>)
 
 To stop Boater Service
 
-Boater.stop()
+    Boater.stop()
 ```
 
 ## Stowaway Service
@@ -27,32 +27,43 @@ Boater.stop()
 ```
 To launch Stowaway Service
 
-Stowaway.start(<Server_Quantity>)
+    Stowaway.start(<Server_Quantity>)
 
 To stop Boater Service
 
-Boater.stop()
+    Boater.stop()
 ```
+
 ## Client Run
 
 ```
 To launch Stowaway Client
 
-Directory.cliente_stowaway(<Login_in_string>)
+    Directory.cliente_stowaway(<Login_in_string>)
 
 To launch Boater Client
 
-
-Directory.cliente_boater(<Login_in_string>)
+    Directory.cliente_boater(<Login_in_string>)
 
 To send menssages to Stowaway Service
 
-
-Directory.enviar_stowaway(<Message_Number>)
+    Directory.enviar_stowaway(<Message_Number>)
 
 To send menssages to Boater Service
 
-Directory.enviar_Boater(<Message_Number>)
+    Directory.enviar_Boater(<Message_Number>)
 
 ```
 
+## Bebugger Start
+
+```
+To load the debugger
+
+    :debugger.start
+
+To load the modules to debug
+
+    :int.ni(<Module>)
+
+```
