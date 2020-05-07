@@ -49,7 +49,7 @@ defmodule Stowaway do
     {:ok, smth}
   end
 
-  def filterSearch(login) do
+  def recordSearch(login) do
     "./Record.csv"
     |> Path.expand()
     |> File.stream!()
@@ -58,29 +58,48 @@ defmodule Stowaway do
     |> Enum.filter(&match?([_, ^login, _, _], &1))
   end
 
-  def boatifySearch(id) do
+  def getCSV() do
     "./Record.csv"
     |> Path.expand()
     |> File.stream!()
     |> CSV.decode()
     |> Enum.map(fn x -> elem(x, 1) end)
-    |> Enum.filter(&match?([^id, _, _, _], &1))
   end
 
+
+  def cancel(id,login) do
+    
+    recordCsv = getCSV()
+
+    indexTrip = recordCsv
+    |> Enum.find_index(&match?([^id, ^login, _, _], &1))
+
+    {_,trip} = recordCsv
+    |> Enum.fetch(indexTrip) 
+    canceledTrip = List.replace_at(trip, 3, "Canceled")
+
+    returnCsv = recordCsv
+    |> List.replace_at(indexTrip, canceledTrip)
+
+    File.write!("./Record.csv", 
+      CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
+      |> Enum.take_every(1)
+      )
+  end  
  
   def ver_historial(server_name, login), do: GenServer.call(server_name, {:historial, login})
   
-  def cancelar_viaje(server_name, id), do: GenServer.call(server_name, {:cancelar, id})
+  def cancelar_viaje(server_name, idViaje), do: GenServer.call(server_name, {:cancelar, idViaje})
 
   @impl true
   def handle_call({:historial, login}, _from, []) do
-    {:reply, filterSearch(login), []}
+    {:reply, recordSearch(login), []}
   end
 
   @impl true
-  def handle_call({:cancelar, id}, _from, []) do
-    IO.puts(id)
-    {:reply, boatifySearch(id), []}
+  def handle_call({:cancelar, [login|id]}, _from, []) do
+    cancel(id,login)
+    {:reply, recordSearch(login), []}
   end
 
 end
