@@ -37,7 +37,7 @@ defmodule Stowaway do
   end
 
   def filterSearch(login) do
-    "../Record.csv"
+    "./Record.csv"
     |> Path.expand()
     |> File.stream!()
     |> CSV.decode()
@@ -46,7 +46,7 @@ defmodule Stowaway do
   end
 
   def boatifySearch(id) do
-    "../Record.csv"
+    "./Record.csv"
     |> Path.expand()
     |> File.stream!()
     |> CSV.decode()

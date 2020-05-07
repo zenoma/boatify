@@ -44,14 +44,14 @@ defmodule Boater do
 
   def to_csv(data) do
     escribir(
-      "../Trip.csv",
+      "./Trip.csv",
       CSV.encode(data, separator: ?\,, delimiter: "\n")
       |> Enum.take(1)
     )
   end
 
   defp filterSearch() do
-    "../Trip.csv"
+    "./Trip.csv"
     |> Path.expand()
     |> File.stream!()
     |> CSV.decode()
@@ -61,7 +61,7 @@ defmodule Boater do
 
   
   defp filterSearch(login) do
-    "../Trip.csv"
+    "./Trip.csv"
     |> Path.expand()
     |> File.stream!()
     |> CSV.decode()
