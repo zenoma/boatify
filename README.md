@@ -4,6 +4,12 @@
 
 - Elixir
 
+## TODO
+
+- Ojo, creo que tener en Directory llamadas del tipo "Stowaway.x" o "Boater.x" es incorrecto. Puede que rompa la consistencia de separación de servidores, lo mejor sería implementar los metodos que realizan los handlecall en el Directory. -FranPe
+
+- Una vez añadido y terminado todo es importante controlar la privacidad de las funciones que no queremos que esten a disposición del usuarios. (defp). -FranPe
+
 ## Boater Service
 
 ```

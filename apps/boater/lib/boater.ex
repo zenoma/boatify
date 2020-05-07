@@ -71,7 +71,6 @@ defmodule Boater do
     |> Enum.filter(&match?([_, _, _, _, _, _, _, _, "Open"], &1))
   end
 
-  
   defp filterSearch(login) do
     "./Trip.csv"
     |> Path.expand()
@@ -81,15 +80,47 @@ defmodule Boater do
     |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
   end
   
+  def getCSV() do
+    "./Trip.csv"
+    |> Path.expand()
+    |> File.stream!()
+    |> CSV.decode()
+    |> Enum.map(fn x -> elem(x, 1) end)
+  end
+
+  def cancel(id,login) do
+    
+    recordCsv = getCSV()
+
+    indexTrip = recordCsv
+    |> Enum.find_index(&match?([^id, ^login, _, _, _, _, _, _, "Open"], &1))
+
+    # MayBe: If indexTrip = null return ERROR, NO TRIP
+
+    {_,trip} = recordCsv
+    |> Enum.fetch(indexTrip) 
+    canceledTrip = List.replace_at(trip, 8, "Canceled")
+
+    returnCsv = recordCsv
+    |> List.replace_at(indexTrip, canceledTrip)
+
+    File.write!("./Trip.csv", 
+      CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
+      |> Enum.take_every(1)
+      )
+  end  
+
+  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})  
+
   def ver_viajesDisp(server_name), do: GenServer.call(server_name, :viajesDisp)
 
   def ver_viajesSubidos(server_name, login), do: GenServer.call(server_name, {:viajesSubidos, login})
 
-  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})
+  def cancelar_Subido(server_name, idViaje), do: GenServer.call(server_name, {:cancelarSubido, idViaje})  
 
   @impl true
-  # TODO Falta montar el viaje correctamente
   def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
+    # TODO Asignación del Id
     to_csv([
       [
         "DamnItTheId",
@@ -117,4 +148,10 @@ defmodule Boater do
     {:reply, filterSearch(), []}
   end  
   
+  @impl true
+  def handle_call({:cancelarSubido, [login|id]}, _from, []) do
+    cancel(id,login)
+    {:reply, filterSearch(login), []}
+  end
+
 end

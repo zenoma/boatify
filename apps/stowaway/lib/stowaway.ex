@@ -66,13 +66,14 @@ defmodule Stowaway do
     |> Enum.map(fn x -> elem(x, 1) end)
   end
 
-
   def cancel(id,login) do
     
     recordCsv = getCSV()
 
     indexTrip = recordCsv
-    |> Enum.find_index(&match?([^id, ^login, _, _], &1))
+    |> Enum.find_index(&match?([^id, ^login, _, "Open"], &1))
+
+    # MayBe: If indexTrip = null return ERROR, NO TRIP
 
     {_,trip} = recordCsv
     |> Enum.fetch(indexTrip) 
@@ -89,7 +90,7 @@ defmodule Stowaway do
  
   def ver_historial(server_name, login), do: GenServer.call(server_name, {:historial, login})
   
-  def cancelar_viaje(server_name, idViaje), do: GenServer.call(server_name, {:cancelar, idViaje})
+  def cancelar_viaje(server_name, idViaje), do: GenServer.call(server_name, {:cancelarReserva, idViaje})
 
   @impl true
   def handle_call({:historial, login}, _from, []) do
@@ -97,7 +98,7 @@ defmodule Stowaway do
   end
 
   @impl true
-  def handle_call({:cancelar, [login|id]}, _from, []) do
+  def handle_call({:cancelarReserva, [login|id]}, _from, []) do
     cancel(id,login)
     {:reply, recordSearch(login), []}
   end
