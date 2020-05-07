@@ -7,15 +7,28 @@ defmodule Stowaway do
   """
 
   #SUPERVISOR
-  def start(name) do
-    # FIXME: Hacer bucle para la creación
-    children = [
-      %{
-        id: name,
-        start: {Stowaway, :levantar_servidor, [name]}
-      }]
 
-      Supervisor.start_link(children, strategy: :one_for_one, name: :stowaway_sup)
+  def start(n) do
+    start_aux(n-1, [])
+  end
+
+  defp start_aux(n, children) when n == 0 do
+    list = [%{
+         id: "#{n}",
+         start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
+       }]
+    children =  children ++ list
+
+    Supervisor.start_link(children, strategy: :one_for_one, name: :stowaway_sup)
+  end
+
+  defp start_aux(n, children) do
+    list = [%{
+         id: "#{n}",
+         start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
+       }]
+    children =  children ++ list
+    start_aux(n-1, children)
   end
   
   def stop() do
@@ -55,9 +68,9 @@ defmodule Stowaway do
   end
 
  
-  def ver_historial(login), do: GenServer.call(:stowserver, {:historial, login})
+  def ver_historial(server_name, login), do: GenServer.call(server_name, {:historial, login})
   
-  def cancelar_viaje(id), do: GenServer.call(:stowserver, {:cancelar, id})
+  def cancelar_viaje(server_name, id), do: GenServer.call(server_name, {:cancelar, id})
 
   @impl true
   def handle_call({:historial, login}, _from, []) do

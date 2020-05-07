@@ -7,15 +7,27 @@ defmodule Boater do
   """
 
   #SUPERVISOR
-  def start(name) do
-    # FIXME: Hacer bucle para la creación
-    children = [
-      %{
-        id: name,
-        start: {Boater, :levantar_servidor, [name]}
-      }]
+  def start(n) do
+    start_aux(n-1, [])
+  end
 
-      Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
+  defp start_aux(n, children) when n == 0 do
+    list = [%{
+         id: "#{n}",
+         start: {Boater, :levantar_servidor, [:"boater#{n}"]}
+       }]
+    children =  children ++ list
+
+    Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
+  end
+
+  defp start_aux(n, children) do
+    list = [%{
+         id: "#{n}",
+         start: {Boater, :levantar_servidor, [:"boater#{n}"]}
+       }]
+    children =  children ++ list
+    start_aux(n-1, children)
   end
 
   def stop() do
@@ -69,11 +81,11 @@ defmodule Boater do
     |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
   end
   
-  def ver_viajesDisp(), do: GenServer.call(:boatserver, :viajesDisp)
+  def ver_viajesDisp(server_name), do: GenServer.call(server_name, :viajesDisp)
 
-  def ver_viajesSubidos(login), do: GenServer.call(:boatserver, {:viajesSubidos, login})
+  def ver_viajesSubidos(server_name, login), do: GenServer.call(server_name, {:viajesSubidos, login})
 
-  def crear_viajes(infoTrip), do: GenServer.call(:boatserver, {:crear, infoTrip})
+  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})
 
   @impl true
   # TODO Falta montar el viaje correctamente
