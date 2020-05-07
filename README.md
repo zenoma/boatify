@@ -15,7 +15,7 @@
 ```
 To launch Boater Service
 
-Boater.start()
+Boater.start(<Server_Quantity>)
 
 To stop Boater Service
 
@@ -27,7 +27,7 @@ Boater.stop()
 ```
 To launch Stowaway Service
 
-Stowaway.start()
+Stowaway.start(<Server_Quantity>)
 
 To stop Boater Service
 
@@ -38,19 +38,21 @@ Boater.stop()
 ```
 To launch Stowaway Client
 
-...
+Directory.cliente_stowaway(<Login_in_string>)
 
 To launch Boater Client
 
-...
 
-To stop Stowaway Service
+Directory.cliente_boater(<Login_in_string>)
 
-..
+To send menssages to Stowaway Service
 
-To stop Boater Service
 
-..
+Directory.enviar_stowaway(<Message_Number>)
+
+To send menssages to Boater Service
+
+Directory.enviar_Boater(<Message_Number>)
 
 ```
 
