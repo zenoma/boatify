@@ -1,33 +1,40 @@
 defmodule Boater do
   use GenServer
+
   @moduledoc """
   Servizo de usuarios 'Boater' para logearse, para crear viajes
   , para ver su historial de viajes,
   y si quiere cancelar alguno.
   """
 
-  #SUPERVISOR
+  # SUPERVISOR
   def start(n) do
-    start_aux(n-1, [])
+    start_aux(n - 1, [])
   end
 
   defp start_aux(n, children) when n == 0 do
-    list = [%{
-         id: "#{n}",
-         start: {Boater, :levantar_servidor, [:"boater#{n}"]}
-       }]
-    children =  children ++ list
+    list = [
+      %{
+        id: "#{n}",
+        start: {Boater, :levantar_servidor, [:"boater#{n}"]}
+      }
+    ]
+
+    children = children ++ list
 
     Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
   end
 
   defp start_aux(n, children) do
-    list = [%{
-         id: "#{n}",
-         start: {Boater, :levantar_servidor, [:"boater#{n}"]}
-       }]
-    children =  children ++ list
-    start_aux(n-1, children)
+    list = [
+      %{
+        id: "#{n}",
+        start: {Boater, :levantar_servidor, [:"boater#{n}"]}
+      }
+    ]
+
+    children = children ++ list
+    start_aux(n - 1, children)
   end
 
   def stop() do
@@ -79,7 +86,7 @@ defmodule Boater do
     |> Enum.map(fn x -> elem(x, 1) end)
     |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
   end
-  
+
   def getCSV() do
     "./Trip.csv"
     |> Path.expand()
@@ -88,42 +95,57 @@ defmodule Boater do
     |> Enum.map(fn x -> elem(x, 1) end)
   end
 
-  def cancel(id,login) do
-    
+  def cancel(id, login) do
     recordCsv = getCSV()
 
-    indexTrip = recordCsv
-    |> Enum.find_index(&match?([^id, ^login, _, _, _, _, _, _, "Open"], &1))
+    indexTrip =
+      recordCsv
+      |> Enum.find_index(&match?([^id, ^login, _, _, _, _, _, _, "Open"], &1))
 
     # MayBe: If indexTrip = null return ERROR, NO TRIP
 
-    {_,trip} = recordCsv
-    |> Enum.fetch(indexTrip) 
+    {_, trip} =
+      recordCsv
+      |> Enum.fetch(indexTrip)
+
     canceledTrip = List.replace_at(trip, 8, "Canceled")
 
-    returnCsv = recordCsv
-    |> List.replace_at(indexTrip, canceledTrip)
+    returnCsv =
+      recordCsv
+      |> List.replace_at(indexTrip, canceledTrip)
 
-    File.write!("./Trip.csv", 
+    File.write!(
+      "./Trip.csv",
       CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
       |> Enum.take_every(1)
-      )
-  end  
+    )
+  end
 
-  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})  
+  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})
 
   def ver_viajesDisp(server_name), do: GenServer.call(server_name, :viajesDisp)
 
-  def ver_viajesSubidos(server_name, login), do: GenServer.call(server_name, {:viajesSubidos, login})
+  def ver_viajesSubidos(server_name, login),
+    do: GenServer.call(server_name, {:viajesSubidos, login})
 
-  def cancelar_Subido(server_name, idViaje), do: GenServer.call(server_name, {:cancelarSubido, idViaje})  
+  def cancelar_Subido(server_name, idViaje),
+    do: GenServer.call(server_name, {:cancelarSubido, idViaje})
 
   @impl true
   def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
-    # TODO Asignación del Id
+    # Leer el id del último Trip añadido.
+    id =
+      Boater.getCSV()
+      |> Enum.at(-1)
+      |> Enum.at(0)
+      |> Integer.parse()
+      |> elem(0)
+      |> Kernel.+(1)
+      |> Integer.to_string()
+
     to_csv([
       [
-        "DamnItTheId",
+        id,
         boater,
         model,
         date,
@@ -134,7 +156,7 @@ defmodule Boater do
         "Open"
       ]
     ])
-    
+
     {:reply, "Se ha añadido correctamente el viaje", []}
   end
 
@@ -142,16 +164,15 @@ defmodule Boater do
   def handle_call({:viajesSubidos, login}, _from, []) do
     {:reply, filterSearch(login), []}
   end
-  
+
   @impl true
   def handle_call(:viajesDisp, _from, []) do
     {:reply, filterSearch(), []}
-  end  
-  
-  @impl true
-  def handle_call({:cancelarSubido, [login|id]}, _from, []) do
-    cancel(id,login)
-    {:reply, filterSearch(login), []}
   end
 
+  @impl true
+  def handle_call({:cancelarSubido, [login | id]}, _from, []) do
+    cancel(id, login)
+    {:reply, filterSearch(login), []}
+  end
 end
