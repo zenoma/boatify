@@ -10,6 +10,14 @@
 
 - Una vez añadido y terminado todo es importante controlar la privacidad de las funciones que no queremos que esten a disposición del usuarios. (defp). -FranPe
 
+- En el caso de uso, CancelarReserva(Stowaway) es necesario controlar el error de que no exista viaje con su login/id/open
+
+- Caso de uso, reservarViaje (StowAway)
+    Un cliente rserva un viaje lo que disminuye en uno la disponibilidad de trip y lo añade en record
+
+- Caso de uso, realizarViaje (Boater)
+    Un Boater realiza un Trip poniendolo en "Done" y haciendo el cambio pertinente en Stowaway
+
 ## Boater Service
 
 ```

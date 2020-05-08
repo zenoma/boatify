@@ -46,6 +46,8 @@ defmodule Directory do
         enviar_stowaway(0)
         stowaway_menu(login)
 
+      #ReservarViaje  
+
       {2, _} ->
         IO.puts("Cargando viajes...")
 
@@ -53,11 +55,11 @@ defmodule Directory do
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
-        stowaway_menu(login)
+        stowaway_menu(login)      
 
       {3, id} ->
         IO.puts("Cancelando viaje...")
-        # SI NO ENCUENTRA ID, QUE PETE
+        Boater.cancelarReserva(select_boater(), id)
         Stowaway.cancelar_viaje(select_stowaway(), [login | id])
         |> Enum.map(fn x -> IO.inspect(x) end)
 
@@ -102,7 +104,6 @@ defmodule Directory do
         boater_menu(login)
       {3, id} ->
         IO.puts("Cancelando viaje...")
-        # SI NO ENCUENTRA ID, QUE PETE
         Boater.cancelar_Subido(select_boater(), [login | id])
         |> Enum.map(fn x -> IO.inspect(x) end)
 

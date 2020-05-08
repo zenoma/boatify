@@ -73,7 +73,9 @@ defmodule Stowaway do
     indexTrip = recordCsv
     |> Enum.find_index(&match?([^id, ^login, _, "Open"], &1))
 
-    # MayBe: If indexTrip = null return ERROR, NO TRIP
+    # TODO:
+    # IF INDEX TRIP = NIL 
+    #   EXIT
 
     {_,trip} = recordCsv
     |> Enum.fetch(indexTrip) 
