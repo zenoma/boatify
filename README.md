@@ -6,17 +6,16 @@
 
 ## TODO
 
-- Ojo, creo que tener en Directory llamadas del tipo "Stowaway.x" o "Boater.x" es incorrecto. Puede que rompa la consistencia de separación de servidores, lo mejor sería implementar los metodos que realizan los handlecall en el Directory. -FranPe
+- Ojo, creo que tener en Directory llamadas del tipo "Stowaway.x" o "Boater.x" es incorrecto. Puede que rompa la consistencia de separación de servidores, lo mejor sería implementar los metodos que realizan los handlecall en el Directory. 
 
-- Una vez añadido y terminado todo es importante controlar la privacidad de las funciones que no queremos que esten a disposición del usuarios. (defp). -FranPe
+- Una vez añadido y terminado todo es importante controlar la privacidad de las funciones que no queremos que esten a disposición del usuarios. (defp). 
 
 - En el caso de uso, CancelarReserva(Stowaway) es necesario controlar el error de que no exista viaje con su login/id/open
 
-- Caso de uso, reservarViaje (StowAway)
-    Un cliente rserva un viaje lo que disminuye en uno la disponibilidad de trip y lo añade en record
-
 - Caso de uso, realizarViaje (Boater)
     Un Boater realiza un Trip poniendolo en "Done" y haciendo el cambio pertinente en Stowaway
+
+- ExDoc is a tool to generate documentation for your Elixir projects. https://github.com/elixir-lang/ex_doc       
 
 ## Boater Service
 

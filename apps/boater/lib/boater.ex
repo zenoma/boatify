@@ -154,6 +154,39 @@ defmodule Boater do
     )
   end
 
+  def reservarBoat(id) do
+    recordCsv = getCSV()
+
+    indexTrip =
+      recordCsv
+      |> Enum.find_index(&match?([^id, _, _, _, _, _, _, _, "Open"], &1))
+
+    {_, trip} =
+      recordCsv
+      |> Enum.fetch(indexTrip)
+
+    nuevosDisponibles =
+      getCSV()
+      |> Enum.at(indexTrip)
+      |> Enum.at(7)
+      |> Integer.parse()
+      |> elem(0)
+      |> Kernel.-(1)
+      |> Integer.to_string()
+
+    canceledTrip = List.replace_at(trip, 7, nuevosDisponibles)
+
+    returnCsv =
+      recordCsv
+      |> List.replace_at(indexTrip, canceledTrip)
+
+    File.write!(
+      "./Trip.csv",
+      CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
+      |> Enum.take_every(1)
+    )
+  end
+
   def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})
 
   def ver_viajesDisp(server_name), do: GenServer.call(server_name, :viajesDisp)
@@ -166,6 +199,9 @@ defmodule Boater do
 
   def cancelar_Reserva(server_name, idViaje),
     do: GenServer.call(server_name, {:cancelarSubido, idViaje})
+
+  def reservar_Boating(server_name, idViaje),
+    do: GenServer.call(server_name, {:reservarBoat, idViaje})
 
   @impl true
   def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
@@ -215,6 +251,12 @@ defmodule Boater do
   @impl true
   def handle_call({:cancelarReserva, id}, _from, []) do
     cancelReserva(id)
+    {:reply, :ok, []}
+  end
+
+  @impl true
+  def handle_call({:reservarBoat, id}, _from, []) do
+    reservarBoat(id)
     {:reply, :ok, []}
   end
 end

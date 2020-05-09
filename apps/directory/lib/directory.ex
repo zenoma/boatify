@@ -1,18 +1,21 @@
 defmodule Directory do
-  
-  #Simulación de un Balanceo de Carga (selección aleatoria)
-  def select_boater() do 
-    {_ ,workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers) #¿Que pasa cuando el supervisor está caido?
-    server  = (:rand.uniform(workers) - 1)  # Va de 0 a workers - 1
+  # Simulación de un Balanceo de Carga (selección aleatoria)
+  def select_boater() do
+    # ¿Que pasa cuando el supervisor está caido?
+    {_, workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers)
+    # Va de 0 a workers - 1
+    server = :rand.uniform(workers) - 1
     :"boater#{server}"
   end
 
-  def select_stowaway() do 
-    {_ ,workers} = Map.fetch(Supervisor.count_children(:stowaway_sup), :workers) #¿Que pasa cuando el supervisor está caido?
-    server  = (:rand.uniform(workers) - 1)  # Va de 0 a workers - 1
+  def select_stowaway() do
+    # ¿Que pasa cuando el supervisor está caido?
+    {_, workers} = Map.fetch(Supervisor.count_children(:stowaway_sup), :workers)
+    # Va de 0 a workers - 1
+    server = :rand.uniform(workers) - 1
     :"stowaway#{server}"
   end
-  
+
   # IMPORTANTE, LOS LOGINS POR TERMINAL ENTRE COMILLAS
 
   def cliente_boater(login) do
@@ -32,7 +35,7 @@ defmodule Directory do
     receive do
       {0, _} ->
         IO.puts(
-          "\nPulsa: \n 1 -Viajes disponibles \n 2 -Historial de viajes \n 3 -Cancelar viaje \n 4 -Salir"
+          "\nPulsa: \n 1 -Viajes disponibles \n 2 -Reservar viaje \n 3 -Historial de viajes \n 3 -Cancelar viaje \n 4 -Salir"
         )
 
         stowaway_menu(login)
@@ -46,27 +49,34 @@ defmodule Directory do
         enviar_stowaway(0)
         stowaway_menu(login)
 
-      #ReservarViaje  
+      {2, id} ->
+        IO.puts("Reservando viaje...")
+        Boater.reservar_Boating(select_boater(), id)
+        Stowaway.reservar_Stowing(select_stowaway(), [login | id])
 
-      {2, _} ->
+        enviar_stowaway(0)
+        stowaway_menu(login)
+
+      {3, _} ->
         IO.puts("Cargando viajes...")
 
         Stowaway.ver_historial(select_stowaway(), login)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
-        stowaway_menu(login)      
+        stowaway_menu(login)
 
-      {3, id} ->
+      {4, id} ->
         IO.puts("Cancelando viaje...")
         Boater.cancelarReserva(select_boater(), id)
+
         Stowaway.cancelar_viaje(select_stowaway(), [login | id])
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
         stowaway_menu(login)
 
-      {4, _} ->
+      {5, _} ->
         IO.puts("Hasta pronto!")
         Process.unregister(:stowclient)
         :ok
@@ -87,6 +97,7 @@ defmodule Directory do
         IO.puts(
           "\nPulsa: \n 1, [Modelo, Fecha, Ruta, Tiempo, Asientos] -Crear Viaje \n 2 -Mis viajes subidos \n 3 -Cancelar viaje \n 4 -Salir"
         )
+
         boater_menu(login)
 
       {1, infoTrip} ->
@@ -97,13 +108,16 @@ defmodule Directory do
 
       {2, _} ->
         IO.puts("Cargando viajes...")
+
         Boater.ver_viajesSubidos(select_boater(), login)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_boater(0)
         boater_menu(login)
+
       {3, id} ->
         IO.puts("Cancelando viaje...")
+
         Boater.cancelar_Subido(select_boater(), [login | id])
         |> Enum.map(fn x -> IO.inspect(x) end)
 

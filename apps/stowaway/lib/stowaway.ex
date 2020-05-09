@@ -1,36 +1,43 @@
 defmodule Stowaway do
   use GenServer
+
   @moduledoc """
   Servizo de usuarios 'Stowaway' para logearse, ver viajes disponibles
   para reservar una plaza en uno de ellos, para ver su historial de viajes,
   y si quiere cancelar alguno.
   """
 
-  #SUPERVISOR
+  # SUPERVISOR
 
   def start(n) do
-    start_aux(n-1, [])
+    start_aux(n - 1, [])
   end
 
   defp start_aux(n, children) when n == 0 do
-    list = [%{
-         id: "#{n}",
-         start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
-       }]
-    children =  children ++ list
+    list = [
+      %{
+        id: "#{n}",
+        start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
+      }
+    ]
+
+    children = children ++ list
 
     Supervisor.start_link(children, strategy: :one_for_one, name: :stowaway_sup)
   end
 
   defp start_aux(n, children) do
-    list = [%{
-         id: "#{n}",
-         start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
-       }]
-    children =  children ++ list
-    start_aux(n-1, children)
+    list = [
+      %{
+        id: "#{n}",
+        start: {Stowaway, :levantar_servidor, [:"stowaway#{n}"]}
+      }
+    ]
+
+    children = children ++ list
+    start_aux(n - 1, children)
   end
-  
+
   def stop() do
     Supervisor.stop(:stowaway_sup, :normal)
   end
@@ -66,33 +73,53 @@ defmodule Stowaway do
     |> Enum.map(fn x -> elem(x, 1) end)
   end
 
-  def cancel(id,login) do
-    
+  def cancel(id, login) do
     recordCsv = getCSV()
 
-    indexTrip = recordCsv
-    |> Enum.find_index(&match?([^id, ^login, _, "Open"], &1))
+    indexTrip =
+      recordCsv
+      |> Enum.find_index(&match?([^id, ^login, _, "Open"], &1))
 
     # TODO:
     # IF INDEX TRIP = NIL 
     #   EXIT
 
-    {_,trip} = recordCsv
-    |> Enum.fetch(indexTrip) 
+    {_, trip} =
+      recordCsv
+      |> Enum.fetch(indexTrip)
+
     canceledTrip = List.replace_at(trip, 3, "Canceled")
 
-    returnCsv = recordCsv
-    |> List.replace_at(indexTrip, canceledTrip)
+    returnCsv =
+      recordCsv
+      |> List.replace_at(indexTrip, canceledTrip)
 
-    File.write!("./Record.csv", 
+    File.write!(
+      "./Record.csv",
       CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
       |> Enum.take_every(1)
-      )
-  end  
- 
+    )
+  end
+
+  def reservaStow(id, login) do
+    recordCsv =
+      getCSV()
+      |> Enum.concat([[id, login, "1", "Open"]])
+
+    File.write!(
+      "./Record.csv",
+      CSV.encode(recordCsv, separator: ?\,, delimiter: "\n")
+      |> Enum.take_every(1)
+    )
+  end
+
   def ver_historial(server_name, login), do: GenServer.call(server_name, {:historial, login})
-  
-  def cancelar_viaje(server_name, idViaje), do: GenServer.call(server_name, {:cancelarReserva, idViaje})
+
+  def cancelar_viaje(server_name, idViaje),
+    do: GenServer.call(server_name, {:cancelarReserva, idViaje})
+
+  def reservar_Stowing(server_name, infoTrip),
+    do: GenServer.call(server_name, {:reservaStow, infoTrip})
 
   @impl true
   def handle_call({:historial, login}, _from, []) do
@@ -100,9 +127,14 @@ defmodule Stowaway do
   end
 
   @impl true
-  def handle_call({:cancelarReserva, [login|id]}, _from, []) do
-    cancel(id,login)
+  def handle_call({:cancelarReserva, [login | id]}, _from, []) do
+    cancel(id, login)
     {:reply, recordSearch(login), []}
   end
 
+  @impl true
+  def handle_call({:reservaStow, [login | id]}, _from, []) do
+    reservaStow(id, login)
+    {:reply, recordSearch(login), []}
+  end
 end
