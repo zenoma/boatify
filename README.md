@@ -6,9 +6,6 @@
 
 ## TODO
 
-- Caso de uso, realizarViaje (Boater)
-    Un Boater realiza un Trip poniendolo en "Done" y haciendo el cambio pertinente en Stowaway
-
 - ExDoc is a tool to generate documentation for your Elixir projects. https://github.com/elixir-lang/ex_doc       
 
 - OPTIONAL:
