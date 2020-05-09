@@ -1,6 +1,6 @@
 defmodule Directory do
   # Simulación de un Balanceo de Carga (selección aleatoria)
-  def select_boater() do
+  defp select_boater() do
     # ¿Que pasa cuando el supervisor está caido?
     {_, workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers)
     # Va de 0 a workers - 1
@@ -8,7 +8,7 @@ defmodule Directory do
     :"boater#{server}"
   end
 
-  def select_stowaway() do
+  defp select_stowaway() do
     # ¿Que pasa cuando el supervisor está caido?
     {_, workers} = Map.fetch(Supervisor.count_children(:stowaway_sup), :workers)
     # Va de 0 a workers - 1
@@ -34,16 +34,20 @@ defmodule Directory do
   defp stowaway_menu(login) do
     receive do
       {0, _} ->
-        IO.puts(
-          "\nPulsa: \n 1 -Viajes disponibles \n 2 -Reservar viaje \n 3 -Historial de viajes \n 3 -Cancelar viaje \n 4 -Salir"
-        )
+        IO.puts("\nIntroduce Directory.enviar_stowaway(opción):
++--------------------------------------+
+|   1          -Viajes disponibles     |
+| (2,id)       -Reservar viaje         |
+|   3          -Historial de viajes    |
+| (4,id)       -Cancelar viaje         |
+|   5          -Salir                  |
++--------------------------------------+")
 
         stowaway_menu(login)
 
       {1, _} ->
         IO.puts("Buscando viajes...")
-
-        Boater.ver_viajesDisp(select_boater())
+        GenServer.call(select_boater(), :viajesDisp)
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
@@ -51,16 +55,15 @@ defmodule Directory do
 
       {2, id} ->
         IO.puts("Reservando viaje...")
-        Boater.reservar_Boating(select_boater(), id)
-        Stowaway.reservar_Stowing(select_stowaway(), [login | id])
+        GenServer.call(select_boater(), {:reservarBoat, id})
+        GenServer.call(select_stowaway(), {:reservaStow, [login | id]})
 
         enviar_stowaway(0)
         stowaway_menu(login)
 
       {3, _} ->
         IO.puts("Cargando viajes...")
-
-        Stowaway.ver_historial(select_stowaway(), login)
+        GenServer.call(select_stowaway(), {:historial, login})
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
@@ -68,9 +71,8 @@ defmodule Directory do
 
       {4, id} ->
         IO.puts("Cancelando viaje...")
-        Boater.cancelarReserva(select_boater(), id)
-
-        Stowaway.cancelar_viaje(select_stowaway(), [login | id])
+        GenServer.call(select_boater(), {:cancelarReserva, id})
+        GenServer.call(select_stowaway(), {:cancelarReserva, [login | id]})
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_stowaway(0)
@@ -94,22 +96,27 @@ defmodule Directory do
   defp boater_menu(login) do
     receive do
       {0, _} ->
-        IO.puts(
-          "\nPulsa: \n 1, [Modelo, Fecha, Ruta, Tiempo, Asientos] -Crear Viaje \n 2 -Mis viajes subidos \n 3 -Cancelar viaje \n 4 -Salir"
-        )
+        IO.puts("\nIntroduce Directory.enviar_boater(opción):   
++-----------------------------------------------------------------+
+|(1, [Modelo, Fecha, Ruta, Tiempo, Asientos]) -Crear Viaje        |
+|                    2                        -Mis viajes subidos |
+|                  (3,id)                     -Cancelar viaje     |
+|                    4                        -Salir              |
++-----------------------------------------------------------------+")
 
         boater_menu(login)
 
       {1, infoTrip} ->
         IO.puts("Creando viajes...")
-        Boater.crear_viajes(select_boater(), [login | infoTrip])
+        GenServer.call(select_boater(), {:crear, [login | infoTrip]})
         enviar_boater(0)
         boater_menu(login)
-
+        
+        enviar_boater(0)
+        boater_menu(login)
       {2, _} ->
         IO.puts("Cargando viajes...")
-
-        Boater.ver_viajesSubidos(select_boater(), login)
+        GenServer.call(select_boater(), {:viajesSubidos, login})
         |> Enum.map(fn x -> IO.inspect(x) end)
 
         enviar_boater(0)
@@ -117,10 +124,11 @@ defmodule Directory do
 
       {3, id} ->
         IO.puts("Cancelando viaje...")
-
-        Boater.cancelar_Subido(select_boater(), [login | id])
+        GenServer.call(select_boater(), {:cancelarSubido, [login | id]})
         |> Enum.map(fn x -> IO.inspect(x) end)
-
+        
+        enviar_boater(0)
+        boater_menu(login)
       {4, _} ->
         IO.puts("Hasta pronto!")
         Process.unregister(:boatclient)

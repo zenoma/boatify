@@ -55,13 +55,13 @@ defmodule Boater do
     {:ok, smth}
   end
 
-  def escribir(archivo, data) do
+  defp escribir(archivo, data) do
     File.open(archivo, [:append])
     |> elem(1)
     |> IO.binwrite(data)
   end
 
-  def to_csv(data) do
+  defp to_csv(data) do
     escribir(
       "./Trip.csv",
       CSV.encode(data, separator: ?\,, delimiter: "\n")
@@ -95,7 +95,7 @@ defmodule Boater do
     |> Enum.map(fn x -> elem(x, 1) end)
   end
 
-  def cancel(id, login) do
+  defp cancel(id, login) do
     recordCsv = getCSV()
 
     indexTrip =
@@ -121,7 +121,7 @@ defmodule Boater do
     )
   end
 
-  def cancelReserva(id) do
+  defp cancelReserva(id) do
     recordCsv = getCSV()
 
     indexTrip =
@@ -154,7 +154,7 @@ defmodule Boater do
     )
   end
 
-  def reservarBoat(id) do
+  defp reservarBoat(id) do
     recordCsv = getCSV()
 
     indexTrip =
@@ -186,22 +186,6 @@ defmodule Boater do
       |> Enum.take_every(1)
     )
   end
-
-  def crear_viajes(server_name, infoTrip), do: GenServer.call(server_name, {:crear, infoTrip})
-
-  def ver_viajesDisp(server_name), do: GenServer.call(server_name, :viajesDisp)
-
-  def ver_viajesSubidos(server_name, login),
-    do: GenServer.call(server_name, {:viajesSubidos, login})
-
-  def cancelar_Subido(server_name, idViaje),
-    do: GenServer.call(server_name, {:cancelarSubido, idViaje})
-
-  def cancelar_Reserva(server_name, idViaje),
-    do: GenServer.call(server_name, {:cancelarSubido, idViaje})
-
-  def reservar_Boating(server_name, idViaje),
-    do: GenServer.call(server_name, {:reservarBoat, idViaje})
 
   @impl true
   def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
