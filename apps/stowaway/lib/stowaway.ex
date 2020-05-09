@@ -7,7 +7,7 @@ defmodule Stowaway do
   y si quiere cancelar alguno.
   """
 
-  # SUPERVISOR
+  # SUPERVISOR - StowServices
 
   def start(n) do
     start_aux(n - 1, [])
@@ -42,7 +42,8 @@ defmodule Stowaway do
     Supervisor.stop(:stowaway_sup, :normal)
   end
 
-  # SERVER
+  # SERVER - Inicialización
+
   def levantar_servidor(name) do
     GenServer.start_link(Stowaway, [], name: name)
   end
@@ -55,6 +56,27 @@ defmodule Stowaway do
   def init(smth) do
     {:ok, smth}
   end
+
+  # SERVER - CallBacks
+
+  @impl true
+  def handle_call({:historial, login}, _from, []) do
+    {:reply, recordSearch(login), []}
+  end
+
+  @impl true
+  def handle_call({:cancelarReserva, [login | id]}, _from, []) do
+    cancel(id, login)
+    {:reply, recordSearch(login), []}
+  end
+
+  @impl true
+  def handle_call({:reservaStow, [login | id]}, _from, []) do
+    reservaStow(id, login)
+    {:reply, recordSearch(login), []}
+  end
+
+  # SERVER - AuxMethods
 
   defp recordSearch(login) do
     "./Record.csv"
@@ -79,10 +101,6 @@ defmodule Stowaway do
     indexTrip =
       recordCsv
       |> Enum.find_index(&match?([^id, ^login, _, "Open"], &1))
-
-    # TODO:
-    # IF INDEX TRIP = NIL 
-    #   EXIT
 
     {_, trip} =
       recordCsv
@@ -111,22 +129,5 @@ defmodule Stowaway do
       CSV.encode(recordCsv, separator: ?\,, delimiter: "\n")
       |> Enum.take_every(1)
     )
-  end
-
-  @impl true
-  def handle_call({:historial, login}, _from, []) do
-    {:reply, recordSearch(login), []}
-  end
-
-  @impl true
-  def handle_call({:cancelarReserva, [login | id]}, _from, []) do
-    cancel(id, login)
-    {:reply, recordSearch(login), []}
-  end
-
-  @impl true
-  def handle_call({:reservaStow, [login | id]}, _from, []) do
-    reservaStow(id, login)
-    {:reply, recordSearch(login), []}
   end
 end

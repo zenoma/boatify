@@ -7,7 +7,8 @@ defmodule Boater do
   y si quiere cancelar alguno.
   """
 
-  # SUPERVISOR
+  # SUPERVISOR - BoaterServices
+
   def start(n) do
     start_aux(n - 1, [])
   end
@@ -41,7 +42,8 @@ defmodule Boater do
     Supervisor.stop(:boater_sup, :normal)
   end
 
-  # SERVER
+  # SERVER - Inicialización
+
   def levantar_servidor(name) do
     GenServer.start_link(Boater, [], name: name)
   end
@@ -55,17 +57,74 @@ defmodule Boater do
     {:ok, smth}
   end
 
-  defp escribir(archivo, data) do
-    File.open(archivo, [:append])
-    |> elem(1)
-    |> IO.binwrite(data)
+  # SERVER - CallBacks
+
+  @impl true
+  def handle_call({:crear, l}, _from, []) do
+    crearTrip(l)
+    {:reply, "Se ha añadido correctamente el viaje", []}
   end
 
-  defp to_csv(data) do
-    escribir(
+  @impl true
+  def handle_call({:viajesSubidos, login}, _from, []) do
+    {:reply, filterSearch(login), []}
+  end
+
+  @impl true
+  def handle_call(:viajesDisp, _from, []) do
+    {:reply, filterSearch(), []}
+  end
+
+  @impl true
+  def handle_call({:cancelarSubido, [login | id]}, _from, []) do
+    cancel(id, login)
+    {:reply, filterSearch(login), []}
+  end
+
+  @impl true
+  def handle_call({:cancelarReserva, id}, _from, []) do
+    cancelReserva(id)
+    {:reply, :ok, []}
+  end
+
+  @impl true
+  def handle_call({:reservarBoat, id}, _from, []) do
+    reservarBoat(id)
+    {:reply, :ok, []}
+  end
+
+  # SERVER - AuxMethods
+
+  defp crearTrip([boater, model, date, route, time, seats]) do
+    id =
+      getCSV()
+      |> Enum.at(-1)
+      |> Enum.at(0)
+      |> Integer.parse()
+      |> elem(0)
+      |> Kernel.+(1)
+      |> Integer.to_string()
+
+    recordCsv =
+      getCSV()
+      |> Enum.concat([
+        [
+          id,
+          boater,
+          model,
+          date,
+          route,
+          time,
+          seats,
+          seats,
+          "Open"
+        ]
+      ])
+
+    File.write!(
       "./Trip.csv",
-      CSV.encode(data, separator: ?\,, delimiter: "\n")
-      |> Enum.take(1)
+      CSV.encode(recordCsv, separator: ?\,, delimiter: "\n")
+      |> Enum.take_every(1)
     )
   end
 
@@ -87,7 +146,7 @@ defmodule Boater do
     |> Enum.filter(&match?([_, ^login, _, _, _, _, _, _, _], &1))
   end
 
-  def getCSV() do
+  defp getCSV() do
     "./Trip.csv"
     |> Path.expand()
     |> File.stream!()
@@ -101,8 +160,6 @@ defmodule Boater do
     indexTrip =
       recordCsv
       |> Enum.find_index(&match?([^id, ^login, _, _, _, _, _, _, "Open"], &1))
-
-    # MayBe: If indexTrip = null return ERROR, NO TRIP
 
     {_, trip} =
       recordCsv
@@ -185,62 +242,5 @@ defmodule Boater do
       CSV.encode(returnCsv, separator: ?\,, delimiter: "\n")
       |> Enum.take_every(1)
     )
-  end
-
-  @impl true
-  def handle_call({:crear, [boater, model, date, route, time, seats]}, _from, []) do
-    # Leer el id del último Trip añadido.
-    id =
-      Boater.getCSV()
-      |> Enum.at(-1)
-      |> Enum.at(0)
-      |> Integer.parse()
-      |> elem(0)
-      |> Kernel.+(1)
-      |> Integer.to_string()
-
-    to_csv([
-      [
-        id,
-        boater,
-        model,
-        date,
-        route,
-        time,
-        seats,
-        seats,
-        "Open"
-      ]
-    ])
-
-    {:reply, "Se ha añadido correctamente el viaje", []}
-  end
-
-  @impl true
-  def handle_call({:viajesSubidos, login}, _from, []) do
-    {:reply, filterSearch(login), []}
-  end
-
-  @impl true
-  def handle_call(:viajesDisp, _from, []) do
-    {:reply, filterSearch(), []}
-  end
-
-  @impl true
-  def handle_call({:cancelarSubido, [login | id]}, _from, []) do
-    cancel(id, login)
-    {:reply, filterSearch(login), []}
-  end
-
-  @impl true
-  def handle_call({:cancelarReserva, id}, _from, []) do
-    cancelReserva(id)
-    {:reply, :ok, []}
-  end
-
-  @impl true
-  def handle_call({:reservarBoat, id}, _from, []) do
-    reservarBoat(id)
-    {:reply, :ok, []}
   end
 end
