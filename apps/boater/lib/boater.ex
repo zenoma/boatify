@@ -76,7 +76,7 @@ defmodule Boater do
   @impl true
   def handle_call({:crear, l}, _from, []) do
     crearTrip(l)
-    {:reply, "Se ha añadido correctamente el viaje", []}
+    {:reply, ["Se ha añadido correctamente el viaje"], []}
   end
 
   @impl true
