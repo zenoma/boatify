@@ -2,13 +2,18 @@ defmodule Stowaway do
   use GenServer
 
   @moduledoc """
-  Servizo de usuarios 'Stowaway' para logearse, ver viajes disponibles
-  para reservar una plaza en uno de ellos, para ver su historial de viajes,
-  y si quiere cancelar alguno.
+    Servicio "Stowaway", encargado de realizar las lecturas
+    y escrituras sobre la base de datos "Record.csv" que 
+    recoge la información referente a usuarios concretos que
+    reservan o han reservado un viaje.
   """
 
   # SUPERVISOR - StowServices
 
+  @doc """
+    Inicia "n" servicios (procesos) Stowaway y los linkea con
+    el un supervisor de Boaters.
+  """
   def start(n) do
     start_aux(n - 1, [])
   end
@@ -38,16 +43,25 @@ defmodule Stowaway do
     start_aux(n - 1, children)
   end
 
+  @doc """
+    Para los servicios asignados al supervisor de Stowaway.
+  """
   def stop() do
     Supervisor.stop(:stowaway_sup, :normal)
   end
 
   # SERVER - Inicialización
 
+  @doc """
+    Inicia un único servicio Stowaway registrado con el nombre que se le envía.
+  """
   def levantar_servidor(name) do
     GenServer.start_link(Stowaway, [], name: name)
   end
 
+  @doc """
+    Para el servicio Stowaway respectivo al nombre que se le envía.
+  """
   def parar_servidor(name) do
     GenServer.stop(name, :normal)
   end

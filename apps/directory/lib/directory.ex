@@ -1,5 +1,9 @@
 defmodule Directory do
-  # Simulación de un Balanceo de Carga (selección aleatoria)
+  @moduledoc """
+    Servicio Directory que realiza el papel de intermediario
+    entre el acceso de clientes y los distintos servicios. 
+  """
+
   defp select_boater() do
     # ¿Que pasa cuando el supervisor está caido?
     {_, workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers)
@@ -16,17 +20,31 @@ defmodule Directory do
     :"stowaway#{server}"
   end
 
-  # IMPORTANTE, LOS LOGINS POR TERMINAL ENTRE COMILLAS
-
   # Cliente: Stowaway
 
+  @doc """
+    Inicia el proceso que representa el cliente con intencionalidad
+    de Stowaway, junto a su login para identificarlo.
+  """
   def cliente_stowaway(login) do
     Process.register(spawn(fn -> stowaway_menu(login) end), :stowclient)
     enviar_stowaway({0})
   end
 
-  def enviar_stowaway(term, opt), do: send(:stowclient, {term, opt})
+  @doc """
+    Llamada que simula el envío de un mensaje al cliente Stowaway y
+    notifica al Directorio la petición concreta para que este la gestione.
+    Este método en concreto acepta un parametro de selección de llamada..
+  """
   def enviar_stowaway(term), do: send(:stowclient, {term, :ok})
+
+  @doc """
+    Llamada que simula el envío de un mensaje al cliente Stowaway y
+    notifica al Directorio la petición concreta para que este la gestione.
+    Este método en concreto acepta un parametro de selección de llamada 
+    junto a otro de introducción de datos necesarios.
+  """
+  def enviar_stowaway(term, opt), do: send(:stowclient, {term, opt})
 
   defp stowaway_menu(login) do
     receive do
@@ -92,13 +110,29 @@ defmodule Directory do
 
   # Cliente: Boater
 
+  @doc """
+    Inicia el proceso que representa el cliente con intencionalidad
+    de Boater, junto a su login para identificarlo.
+  """
   def cliente_boater(login) do
     Process.register(spawn(fn -> boater_menu(login) end), :boatclient)
     enviar_boater(0)
   end
 
-  def enviar_boater(term, opt), do: send(:boatclient, {term, opt})
+  @doc """
+    Llamada que simula el envío de un mensaje al cliente Boater y
+    notifica al Directorio la petición concreta para que este la gestione.
+    Este método en concreto acepta un parametro de selección de llamada.
+  """
   def enviar_boater(term), do: send(:boatclient, {term, :ok})
+
+  @doc """
+    Llamada que simula el envío de un mensaje al cliente Boater y
+    notifica al Directorio la petición concreta para que este la gestione.
+    Este método en concreto acepta un parametro de selección de llamada 
+    junto a otro de introducción de datos necesarios.
+  """
+  def enviar_boater(term, opt), do: send(:boatclient, {term, opt})
 
   defp boater_menu(login) do
     receive do

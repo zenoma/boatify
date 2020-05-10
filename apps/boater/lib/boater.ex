@@ -2,13 +2,18 @@ defmodule Boater do
   use GenServer
 
   @moduledoc """
-  Servizo de usuarios 'Boater' para logearse, para crear viajes
-  , para ver su historial de viajes,
-  y si quiere cancelar alguno.
+    Servicio "Boater", encargado de realizar las lecturas
+    y escrituras sobre la base de datos "Trip.csv" que 
+    recoge la información completa de los viajes registrados
+    en el sistema.
   """
 
   # SUPERVISOR - BoaterServices
 
+  @doc """
+    Inicia "n" servicios (procesos) Boater y los linkea con
+    el un supervisor de Boaters.
+  """
   def start(n) do
     start_aux(n - 1, [])
   end
@@ -38,16 +43,25 @@ defmodule Boater do
     start_aux(n - 1, children)
   end
 
+  @doc """
+    Para los servicios asignados al supervisor de Boaters.
+  """
   def stop() do
     Supervisor.stop(:boater_sup, :normal)
   end
 
   # SERVER - Inicialización
 
+  @doc """
+    Inicia un único servicio Boater registrado con el nombre que se le envía.
+  """
   def levantar_servidor(name) do
     GenServer.start_link(Boater, [], name: name)
   end
 
+  @doc """
+    Para el servicio Boater respectivo al nombre que se le envía.
+  """
   def parar_servidor(name) do
     GenServer.stop(name, :normal)
   end
