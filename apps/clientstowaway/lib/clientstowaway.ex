@@ -46,7 +46,7 @@ defmodule Clientstowaway do
       {1, _} ->
         IO.puts("Buscando viajes...")
 
-        Directory.viajes_disponibles_stow()
+        GenServer.call(:directory, {:viajes_disponibles_stow})
 
         enviar_stowaway(0)
         stowaway_menu(login)
@@ -54,8 +54,8 @@ defmodule Clientstowaway do
       {2, id} ->
         IO.puts("Reservando viaje...")
 
-        Directory.reservar_boat(id)
-        Directory.reservar_stow([login | id])
+        GenServer.call(:directory, {:reservar_boat, id})
+        GenServer.call(:directory, {:reservar_stow, [login | id]})
 
         IO.puts("Hecho!")
 
@@ -65,7 +65,7 @@ defmodule Clientstowaway do
       {3, _} ->
         IO.puts("Cargando viajes...")
 
-        Directory.ver_historial_stow(login)
+        GenServer.call(:directory, {:ver_historial_stow, login})
 
         enviar_stowaway(0)
         stowaway_menu(login)
@@ -73,9 +73,8 @@ defmodule Clientstowaway do
       {4, id} ->
         IO.puts("Cancelando viaje...")
 
-        Directory.cancel_reserva_boat(id)
-
-        Directory.cancel_reserva_stow([login | id])
+        GenServer.call(:directory, {:cancel_reserva_boat, id})
+        GenServer.call(:directory, {:cancel_reserva_stow, [login | id]})
 
         enviar_stowaway(0)
         stowaway_menu(login)

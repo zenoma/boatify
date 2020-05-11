@@ -45,9 +45,9 @@ defmodule Clientboater do
       {1, infoTrip} ->
         IO.puts("Subiendo viaje...")
 
-        Directory.subir_viaje([login | infoTrip])
+        GenServer.call(:directory, {:subir_viaje, [login | infoTrip]})
 
-        Directory.ver_historial_boat(login)
+        GenServer.call(:directory, {:ver_historial_boat, login})
 
         enviar_boater(0)
         boater_menu(login)
@@ -55,7 +55,7 @@ defmodule Clientboater do
       {2, _} ->
         IO.puts("Cargando viajes...")
 
-        Directory.ver_historial_boat(login)
+        GenServer.call(:directory, {:ver_historial_boat, login})
 
         enviar_boater(0)
         boater_menu(login)
@@ -63,7 +63,7 @@ defmodule Clientboater do
       {3, id} ->
         IO.puts("Cancelando viaje...")
 
-        Directory.cancel_viaje([login | id])
+        GenServer.call(:directory, {:cancel_viaje, [login | id]})
 
         enviar_boater(0)
         boater_menu(login)
