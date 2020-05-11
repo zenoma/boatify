@@ -36,25 +36,22 @@ To stop Boater Service
     Boater.stop()
 ```
 
+## Directory Service
+
+```
+To launch Directory Service
+
+    Directory.start()
+
+To stop Boater Service
+
+    Directory.stop()
+```
+
 ## Client Run
 
 ```
-To launch Stowaway Client
-
-    Directory.cliente_stowaway(<Login_in_string>)
-
-To launch Boater Client
-
-    Directory.cliente_boater(<Login_in_string>)
-
-To send menssages to Stowaway Service
-
-    Directory.enviar_stowaway(<Message_Number>)
-
-To send menssages to Boater Service
-
-    Directory.enviar_Boater(<Message_Number>)
-
+TODO
 ```
 
 ## Bebugger Start

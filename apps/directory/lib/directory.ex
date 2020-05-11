@@ -4,27 +4,35 @@ defmodule Directory do
     entre el acceso de clientes y los distintos servicios. 
   """
 
-  defp select_boater() do
-    # ¿Que pasa cuando el supervisor está caido?
-    {_, workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers)
-    # Va de 0 a workers - 1
-    server = :rand.uniform(workers) - 1
-    :"boater#{server}"
-  end
-
-  defp select_stowaway() do
-    # ¿Que pasa cuando el supervisor está caido?
-    {_, workers} = Map.fetch(Supervisor.count_children(:stowaway_sup), :workers)
-    # Va de 0 a workers - 1
-    server = :rand.uniform(workers) - 1
-    :"stowaway#{server}"
-  end
-
   # SERVER - Inicialización
+  @doc """
+    Inicia el servicio (procesos) Directory y vigilado por 
+    un supervisor encargado.
+  """
+  def start() do
+    list = [
+      %{
+        id: :Directory,
+        start: {Directory, :levantar_servidor, []}
+      }
+    ]
+
+    Supervisor.start_link(list, strategy: :one_for_one, name: :directory_sup)
+  end
+
+
+   @doc """
+    Para los servicios asignados al supervisor de Stowaway.
+  """
+  def stop() do
+    Supervisor.stop(:directory_sup, :normal)
+  end
+
 
   @doc """
     Inicia un único servicio Directory registrado con el nombre que se le envía.
   """
+  
   def levantar_servidor() do
     GenServer.start_link(Directory, [], name: :directory)
   end
@@ -34,6 +42,20 @@ defmodule Directory do
   """
   def parar_servidor() do
     GenServer.stop(:directory, :normal)
+  end
+
+  defp select_boater() do
+    {_, workers} = Map.fetch(Supervisor.count_children(:boater_sup), :workers)
+    # Va de 0 a workers - 1
+    server = :rand.uniform(workers) - 1
+    :"boater#{server}"
+  end
+
+  defp select_stowaway() do
+    {_, workers} = Map.fetch(Supervisor.count_children(:stowaway_sup), :workers)
+    # Va de 0 a workers - 1
+    server = :rand.uniform(workers) - 1
+    :"stowaway#{server}"
   end
 
   @impl true

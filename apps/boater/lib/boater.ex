@@ -12,13 +12,13 @@ defmodule Boater do
 
   @doc """
     Inicia "n" servicios (procesos) Boater y los linkea con
-    el un supervisor de Boaters.
+    el supervisor encargado de Boater.
   """
   def start(n) do
-    start_aux(n - 1, [])
+    start(n - 1, [])
   end
 
-  defp start_aux(n, children) when n == 0 do
+  def start(n, children) when n == 0 do
     list = [
       %{
         id: "#{n}",
@@ -31,7 +31,7 @@ defmodule Boater do
     Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
   end
 
-  defp start_aux(n, children) do
+  def start(n, children) do
     list = [
       %{
         id: "#{n}",
@@ -40,7 +40,7 @@ defmodule Boater do
     ]
 
     children = children ++ list
-    start_aux(n - 1, children)
+    start(n - 1, children)
   end
 
   @doc """
