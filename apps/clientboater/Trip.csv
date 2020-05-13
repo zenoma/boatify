@@ -1,0 +1,34 @@
+TripID,Boater,Model,Date,Route,Time,Seats,Free,Status
+1,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Open
+2,Sergio,Brava 22 W.A,23/11/2020,Lanzarote – FuerteVentura,10:20:00 PM,5,3,Open
+3,Sandra,Br 22 W.A,23/11/2020,Larote – FuerteVentura,10:20:00 PM,5,3,Open
+4,Sandra,Brava 22 W.A,23/11/2020,Lanzarote – FuerteVentura,10:20:00 PM,5,3,Open
+5,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Close
+6,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Close
+7,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Close
+8,John,Yamaha,FromHereToThere,TheLastOneWasDate,aBlink,5,5,Open
+9,BoaterTest,Modelo,Fecha,Ruta,Hora,4,4,Open
+10,BoaterTest,Modelo,Fecha,Ruta,Hora,4,4,Open
+11,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Open
+12,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Open
+13,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+14,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Open
+15,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+16,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+17,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+18,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+19,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+20,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+21,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+22,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+23,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+24,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+25,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+26,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+27,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+28,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+29,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+30,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+31,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+32,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled
+33,BoaterTest,ModeloTest,FechaTest,RutaTest,HoraTest,4,4,Canceled

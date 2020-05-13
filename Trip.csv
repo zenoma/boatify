@@ -7,3 +7,4 @@ TripID,Boater,Model,Date,Route,Time,Seats,Free,Status
 6,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Close
 7,Raquel,Hanse -458,22/11/2020,Gomera – Las Palmas,06:20:00 AM,6,6,Close
 8,John,Yamaha,FromHereToThere,TheLastOneWasDate,aBlink,5,5,Open
+9,BoaterDev,Model,le,li,lo,lu,lu,Canceled
