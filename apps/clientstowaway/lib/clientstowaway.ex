@@ -32,7 +32,7 @@ defmodule Clientstowaway do
   defp stowaway_menu(login) do
     receive do
       {0, _} ->
-        IO.puts("\nIntroduce Directory.enviar_stowaway(opción/es):
+        IO.puts("\nIntroduce Clientstowaway.enviar_stowaway(opción/es):
 +--------------------------------------+
 |   1          -Viajes disponibles     |
 | (2,id)       -Reservar viaje         |

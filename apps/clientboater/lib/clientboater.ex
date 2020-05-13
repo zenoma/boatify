@@ -32,7 +32,7 @@ defmodule Clientboater do
   defp boater_menu(login) do
     receive do
       {0, _} ->
-        IO.puts("\nIntroduce Directory.enviar_boater(opción/es):   
+        IO.puts("\nIntroduce Clientboater.enviar_boater(opción/es):   
 +-----------------------------------------------------------------+
 |(1, [Modelo, Fecha, Ruta, Tiempo, Asientos]) -Crear Viaje        |
 |                    2                        -Mis viajes subidos |
