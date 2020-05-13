@@ -2,13 +2,21 @@ defmodule DirectoryTest do
   use ExUnit.Case
   doctest Directory
 
-  # test "un stowaway se registra para acceder a sus opciones del menu" do
-  #   assert Directory.cliente_stowaway("Sandra") == {{0},:ok}
-  # end
+  test "inicio_y_parada", _value do
+    {st, _pid} = Directory.levantar_servidor
+    assert st = :ok
 
-  # test "un boater se registra para acceder a sus opciones del menu" do
-  #   assert Directory.cliente_boater("Raquel") == {0,:ok}
-  # end
+    stop = Directory.parar_servidor
+    assert stop == :ok
+  end
+
+  test "inicio_y_parada_supervisada", _value do
+    {st, _pid} = Directory.start()
+    assert st = :ok
+
+    stop = Directory.stop()
+    assert stop == :ok
+  end
 
 end
 

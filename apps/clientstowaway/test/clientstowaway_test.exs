@@ -5,7 +5,7 @@ defmodule ClientstowawayTest do
   setup_all do
     {:ok, _boaterPID} = Boater.start(1)
     {:ok, _boaterPID} = Stowaway.start(1)
-    {:ok, _directoryPID} = Directory.levantar_servidor
+    {:ok, _directoryPID} = Directory.start
     {_value, :ok} = Clientstowaway.cliente_stowaway("StowerTest")
     :ok
   end

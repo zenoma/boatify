@@ -22,7 +22,7 @@ defmodule Directory do
 
 
    @doc """
-    Para los servicios asignados al supervisor de Stowaway.
+    Para los servicios asignados al supervisor del Directory.
   """
   def stop() do
     Supervisor.stop(:directory_sup, :normal)

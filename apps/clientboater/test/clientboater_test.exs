@@ -5,7 +5,7 @@ defmodule ClientboaterTest do
 
   setup_all do
     {:ok, _boaterPID} = Boater.start(1)
-    {:ok, _directoryPID} = Directory.levantar_servidor
+    {:ok, _directoryPID} = Directory.start
     {_value, :ok} = Clientboater.cliente_boater("BoaterTest")
     :ok
   end
