@@ -3,10 +3,10 @@ defmodule DirectoryTest do
   doctest Directory
 
   test "inicio_y_parada", _value do
-    {st, _pid} = Directory.levantar_servidor
+    {st, _pid} = Directory.levantar_servidor()
     assert st = :ok
 
-    stop = Directory.parar_servidor
+    stop = Directory.parar_servidor()
     assert stop == :ok
   end
 
@@ -17,6 +17,4 @@ defmodule DirectoryTest do
     stop = Directory.stop()
     assert stop == :ok
   end
-
 end
-

@@ -20,19 +20,17 @@ defmodule Directory do
     Supervisor.start_link(list, strategy: :one_for_one, name: :directory_sup)
   end
 
-
-   @doc """
+  @doc """
     Para los servicios asignados al supervisor del Directory.
   """
   def stop() do
     Supervisor.stop(:directory_sup, :normal)
   end
 
-
   @doc """
     Inicia un único servicio Directory registrado con el nombre que se le envía.
   """
-  
+
   def levantar_servidor() do
     GenServer.start_link(Directory, [], name: :directory)
   end

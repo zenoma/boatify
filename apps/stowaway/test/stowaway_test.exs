@@ -21,7 +21,4 @@ defmodule StowawayTest do
   #   Stowaway.start(1)
   #   Stowaway.stop
   # end
-   
 end
-
-
