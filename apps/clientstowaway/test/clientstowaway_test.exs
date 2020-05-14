@@ -29,7 +29,7 @@ defmodule ClientstowawayTest do
       |> Enum.at(7)
       |> String.to_integer()
 
-    book = Clientstowaway.enviar_stowaway(2, "8")
+    Clientstowaway.enviar_stowaway(2, "8")
     Process.sleep(500)
 
     trip_disp_after =
@@ -52,7 +52,7 @@ defmodule ClientstowawayTest do
       |> Enum.map(fn x -> elem(x, 1) end)
       |> Enum.at(-1)
 
-    assert record = ["8", "StowerTest", "1", "Open"]
+    assert record == ["8", "StowerTest", "1", "Open"]
 
     # Ver mis viajes 
 
@@ -72,7 +72,7 @@ defmodule ClientstowawayTest do
       |> Enum.at(7)
       |> String.to_integer()
 
-    book = Clientstowaway.enviar_stowaway(4, "8")
+    Clientstowaway.enviar_stowaway(4, "8")
     Process.sleep(500)
 
     trip_disp_after =
@@ -85,7 +85,7 @@ defmodule ClientstowawayTest do
       |> Enum.at(7)
       |> String.to_integer()
 
-    assert trip_disp_before = trip_disp_after
+    assert trip_disp_before != trip_disp_after
 
     record =
       "./Record.csv"
@@ -95,7 +95,7 @@ defmodule ClientstowawayTest do
       |> Enum.map(fn x -> elem(x, 1) end)
       |> Enum.at(-1)
 
-    assert record = ["8", "StowerTest", "1", "Canceled"]
+    assert record == ["8", "StowerTest", "1", "Canceled"]
 
     # Cerrar
 

@@ -18,7 +18,7 @@ defmodule Boater do
     start(n - 1, [])
   end
 
-  def start(n, children) when n == 0 do
+  defp start(n, children) when n == 0 do
     list = [
       %{
         id: "#{n}",
@@ -31,7 +31,7 @@ defmodule Boater do
     Supervisor.start_link(children, strategy: :one_for_one, name: :boater_sup)
   end
 
-  def start(n, children) do
+  defp start(n, children) do
     list = [
       %{
         id: "#{n}",

@@ -36,7 +36,7 @@ defmodule ClientboaterTest do
     Clientboater.enviar_boater(3, id)
     Process.sleep(500)
 
-    [idc | info_tripc] =
+    [_idc | info_tripc] =
       "./Trip.csv"
       |> Path.expand()
       |> File.stream!()
@@ -44,7 +44,7 @@ defmodule ClientboaterTest do
       |> Enum.map(fn x -> elem(x, 1) end)
       |> Enum.at(-1)
 
-    assert Kernel.match?(info_trip, [
+    assert Kernel.match?(info_tripc, [
              "BoaterTest",
              "ModeloTest",
              "FechaTest",

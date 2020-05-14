@@ -3,7 +3,7 @@ defmodule DirectoryTest do
   doctest Directory
 
   test "inicio_y_parada", _value do
-    {st, _pid} = Directory.levantar_servidor()
+    {_st, _pid} = Directory.levantar_servidor()
     assert st = :ok
 
     stop = Directory.parar_servidor()
@@ -11,7 +11,7 @@ defmodule DirectoryTest do
   end
 
   test "inicio_y_parada_supervisada", _value do
-    {st, _pid} = Directory.start()
+    {_st, _pid} = Directory.start()
     assert st = :ok
 
     stop = Directory.stop()
